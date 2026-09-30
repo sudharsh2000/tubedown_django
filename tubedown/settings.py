@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-$_7*&w#8s2u#q+mtdeo%13s_7tf9rkut6h3z!!y2$_+ao2^vw0
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['tubedown-django.onrender.com','localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
