@@ -24,7 +24,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -113,7 +113,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://tubedowninstant.vercel.app'
 ]
-CORS_ALLOWED_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 CELERY_RESULT_BACKEND= os.getenv('CELERY_RESULT_BACKEND')
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
