@@ -8,45 +8,48 @@ from celery import shared_task
 @shared_task
 def download_video( url, resolution):
 
+        try:
+            temp_dir = tempfile.mkdtemp()
 
-        temp_dir = tempfile.mkdtemp()
+            output_template = os.path.join(
+                temp_dir,
+                "%(title)s.%(ext)s"
+            )
 
-        output_template = os.path.join(
-            temp_dir,
-            "%(title)s.%(ext)s"
-        )
+            ydl_opts = {
+                "format": (
+                    f"bestvideo[height<={resolution}]"
+                    f"+bestaudio/best[height<={resolution}]"
+                ),
+                "outtmpl": output_template,
+                "merge_output_format": "mp4",
+                "noplaylist": True,
+            }
 
-        ydl_opts = {
-            "format": (
-                f"bestvideo[height<={resolution}]"
-                f"+bestaudio/best[height<={resolution}]"
-            ),
-            "outtmpl": output_template,
-            "merge_output_format": "mp4",
-            "noplaylist": True,
-        }
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
 
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
+            video_files = [
+                file
+                for file in os.listdir(temp_dir)
+                if file.lower().endswith(".mp4")
+            ]
 
-        video_files = [
-            file
-            for file in os.listdir(temp_dir)
-            if file.lower().endswith(".mp4")
-        ]
+            if not video_files:
+                raise Exception("Video file was not created.")
 
-        if not video_files:
-            raise Exception("Video file was not created.")
+            file_path = os.path.join(
+                temp_dir,
+                video_files[0]
+            )
 
-        file_path = os.path.join(
-            temp_dir,
-            video_files[0]
-        )
-
-        return {
-            "file_path": file_path,
-            "title": info.get("title", "video"),
-        }
+            return {
+                "file_path": file_path,
+                "title": info.get("title", "video"),
+            }
+        except Exception as e:
+            print(f"Error downloading video: {str(e)}")
+            raise Exception(f"Error downloading video: {str(e)}")
 
 
 @shared_task
