@@ -8,9 +8,9 @@ from rest_framework.views import APIView
 
 from tubedownapp.serializers import DownloadSerializer
 from tubedownapp.tasks import download_video, download_audio
-
-def home(request):
-    return HttpResponse("Hello, world. You're at the polls page.")
+class home(APIView):
+    def get(self, request):
+        return Response({'message': 'Welcome to TubeDownApp!'})
 
 class DownloadApiview(APIView):
 
